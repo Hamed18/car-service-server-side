@@ -45,7 +45,7 @@ async function run() {
 
 		const options = {
 			// Include only the `title` and `imdb` fields in the returned document
-			projection: { title: 1, price: 1, service_id: 1 },
+			projection: { title: 1, price: 1, service_id: 1, img: 1 },
 		  };
 
 		const result = await serviceCollection.findOne(query, options);
@@ -59,6 +59,17 @@ async function run() {
 		const result = await bookingCollection.insertOne(booking);
 		res.send(result);
 	});
+  
+  // load data using query parameter. 
+  app.get('/bookings', async(req,res) => {
+     console.log(req.query.email);  // If the URL contains something like /bookings?email=test@example.com, the value test@example.com will be logged.
+     let query = {};
+     if (req.query?.email){  //checks if the email query parameter is present in the request.
+       query = {email : req.query.email} //If email exists, it updates the query object to filter documents where the email field matches the provided email.
+     }
+     const result = await bookingCollection.find(query).toArray();  //find(query) searches for documents matching the criteria in query.
+     res.send(result);
+  })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
