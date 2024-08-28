@@ -60,7 +60,7 @@ async function run() {
 		res.send(result);
 	});
   
-  // load data using query parameter. 
+  // load data using query parameter. My List/ My booking: load some data/object using a particular object
   app.get('/bookings', async(req,res) => {
      console.log(req.query.email);  // If the URL contains something like /bookings?email=test@example.com, the value test@example.com will be logged.
      let query = {};
@@ -70,6 +70,15 @@ async function run() {
      const result = await bookingCollection.find(query).toArray();  //find(query) searches for documents matching the criteria in query.
      res.send(result);
   })
+
+  // delete api to delete a booking
+  app.delete('/bookings/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await bookingCollection.deleteOne(query);
+    res.send(result);
+})
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
