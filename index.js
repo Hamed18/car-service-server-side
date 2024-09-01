@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser')
 const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
@@ -8,11 +9,11 @@ const port = process.env.PORT || 4000;
 
 // middleware
 app.use(cors({
-  origin: ['http://localhost:5174'],
+  origin: ['http://localhost:5174'],  // cookies work in a particular domain
   credentials: true  // domain needs to be same. It's written bcz here client is on 5174, server is on port 5000
 }));
 app.use(express.json());
-
+app.use(cookieParser());
 
 //console.log(process.env.DB_PASS)
 
@@ -83,6 +84,7 @@ async function run() {
   // load data using query parameter. My List/ My booking: load some data/object using a particular object
   app.get('/bookings', async(req,res) => {
      console.log(req.query.email);  // If the URL contains something like /bookings?email=test@example.com, the value test@example.com will be logged.
+     console.log('tok tok token', req.cookies.token)
      let query = {};
      if (req.query?.email){  //checks if the email query parameter is present in the request.
        query = {email : req.query.email} //If email exists, it updates the query object to filter documents where the email field matches the provided email.
