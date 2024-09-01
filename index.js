@@ -35,8 +35,9 @@ async function run() {
   // auth related api
   app.post('/jwt', async(req,res) => {
     const user = req.body;
-    console.log(user);
-    res.send(user);
+    console.log(user);  // check if server has receive the request that has sent from client side
+    const token = jwt.sign(user,'secret',{expiresIn: '1h'})
+    res.send(token);
   })
 
   // services related api
