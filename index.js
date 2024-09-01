@@ -32,11 +32,11 @@ async function run() {
 	const serviceCollection = client.db('carDoctor').collection('services');
 	const bookingCollection = client.db('carDoctor').collection('bookings');
 
-  // auth related api
+  // auth related api. generate secret: require('crypto').randomBytes(64).toString('hex')
   app.post('/jwt', async(req,res) => {
     const user = req.body;
     console.log(user);  // check if server has receive the request that has sent from client side
-    const token = jwt.sign(user,'secret',{expiresIn: '1h'})
+    const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
     res.send(token);
   })
 
