@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion,ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
@@ -10,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 
-console.log(process.env.DB_PASS)
+//console.log(process.env.DB_PASS)
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.3nkfm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -31,6 +32,14 @@ async function run() {
 	const serviceCollection = client.db('carDoctor').collection('services');
 	const bookingCollection = client.db('carDoctor').collection('bookings');
 
+  // auth related api
+  app.post('/jwt', async(req,res) => {
+    const user = req.body;
+    console.log(user);
+    res.send(user);
+  })
+
+  // services related api
 	// client: service section (find multiple document of the collection)
     app.get('/services', async(req, res) =>{
         const cursor = serviceCollection.find();
