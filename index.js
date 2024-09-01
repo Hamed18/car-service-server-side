@@ -37,7 +37,13 @@ async function run() {
     const user = req.body;
     console.log(user);  // check if server has receive the request that has sent from client side
     const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
-    res.send(token);
+    res
+    .cookie('token',token,{
+      httpOnly: true,
+      secure: false,  // http://localhost:5174/  if it's https, it will be true
+      sameSite: 'none'  // if client and server running on same port
+    })
+    .send({success: true});
   })
 
   // services related api
