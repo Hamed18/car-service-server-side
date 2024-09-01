@@ -7,7 +7,10 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5174'],
+  credentials: true  // domain needs to be same. It's written bcz here client is on 5174, server is on port 5000
+}));
 app.use(express.json());
 
 
@@ -41,7 +44,8 @@ async function run() {
     .cookie('token',token,{
       httpOnly: true,
       secure: false,  // http://localhost:5174/  if it's https, it will be true
-      sameSite: 'none'  // if client and server running on same port
+      sameSite: 'none',  // if client and server don't running on same port then, it's none
+    //  maxAge
     })
     .send({success: true});
   })
