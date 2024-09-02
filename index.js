@@ -34,23 +34,23 @@ const logger = async(req,res,next) => {   // this blocks work perfectly
    next();
 }
 
-const verifyToken = async(req,res,next) => {
-  const token = req.cookies?.token;
-  console.log('value of token in middleware',token)  // code works till now
-  if (!token){
-    return res.status(401).send({message: 'not authorized'})
-  }
-  jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,decoded) => {
-    // error
-    if (err){
-      console.log(err)
-      return res.status(401).send({message: 'unauthorized'})
-    }
-    console.log('value in the token', decoded)
-    req.user.decoded;
-    next()
-  })
-}
+// const verifyToken = async(req,res,next) => {
+//   const token = req.cookies?.token;
+//   console.log('value of token in middleware',token)  // code works till now
+//   if (!token){
+//     return res.status(401).send({message: 'not authorized'})
+//   }
+//   jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,decoded) => {
+//     // error
+//     if (err){
+//       console.log(err)
+//       return res.status(401).send({message: 'unauthorized'})
+//     }
+//     console.log('value in the token', decoded)
+//     req.user.decoded;
+//     next()
+//   })
+// }
 
 async function run() {
   try {
@@ -61,7 +61,7 @@ async function run() {
 	const bookingCollection = client.db('carDoctor').collection('bookings');
 
   // auth related api. generate secret: require('crypto').randomBytes(64).toString('hex')
-  app.post('/jwt', logger, async(req,res) => {
+  app.post('/jwt', async(req,res) => {
     const user = req.body;
     console.log(user);  // check if server has receive the request that has sent from client side
     const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'})
@@ -77,7 +77,7 @@ async function run() {
 
   // services related api
 	// client: service section (find multiple document of the collection)
-    app.get('/services', logger, async(req, res) =>{
+    app.get('/services', async(req, res) =>{
         const cursor = serviceCollection.find();
         const result = await cursor.toArray();
         res.send(result);
@@ -98,13 +98,13 @@ async function run() {
 	})
 
     // load data using query parameter. My List/ My booking: load some data/object using a particular object
-    app.get('/bookings', logger, verifyToken, async(req,res) => {
+    app.get('/bookings', async(req,res) => {
       console.log(req.query.email);  // If the URL contains something like /bookings?email=test@example.com, the value test@example.com will be logged.
-    //  console.log('tok tok token', req.cookies.token)
-    console.log('user in the valid token', req.user) 
-    if (req.query.email !== req.user.email){
-      return res.status(403).send({message: 'forbidden access'})
-    }
+      // console.log('tok tok token', req.cookies.token)
+      // console.log('user in the valid token', req.user) 
+      // if (req.query.email !== req.user.email){
+      //   return res.status(403).send({message: 'forbidden access'})
+      // }
     
     let query = {};
       if (req.query?.email){  //checks if the email query parameter is present in the request.
